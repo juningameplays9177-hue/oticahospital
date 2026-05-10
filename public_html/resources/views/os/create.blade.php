@@ -82,7 +82,7 @@
 
                 <!-- Tab: Dados e Itens (Unificada) -->
                 <div id="content-dados-itens" class="tab-content">
-                    <!-- PUPILÔMETRO: tudo dentro deste ficheiro (sem @include) — ideal para hospedagens web só carregarem este .blade -->
+                    <!-- PUPILÔMETRO: tudo dentro deste ficheiro (sem @@include) — ideal para hospedagens web só carregarem este .blade -->
                     <div id="hosOsPupiloAnchor" class="mb-8 rounded-xl overflow-hidden border-2 border-teal-500 shadow-lg bg-slate-900">
                         <style>
                             #hosOsPupilo{font-family:system-ui,Segoe UI,Roboto,sans-serif;background:#0b1220;color:#e5eef5;padding:14px;line-height:1.45;font-size:15px;}

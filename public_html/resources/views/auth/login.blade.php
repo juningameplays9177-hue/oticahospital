@@ -102,6 +102,13 @@
                     </button>
                 </form>
 
+                @if (Route::has('register'))
+                    <p class="mt-4 text-center text-sm text-slate-600">
+                        Primeiro acesso?
+                        <a href="{{ route('register') }}" class="font-semibold text-blue-600 hover:text-blue-500">Criar conta</a>
+                    </p>
+                @endif
+
                 <!-- Mensagens de Erro Gerais -->
                 @if ($errors->any())
                     <div class="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
