@@ -253,14 +253,7 @@
                             </p>
                         </div>
                         <div class="bg-slate-950">
-                            <iframe
-                                id="iframePupilometroNovaOs"
-                                src="{{ url('/pupilometro-digital') }}"
-                                class="w-full border-0 block bg-slate-950"
-                                style="min-height: 640px; height: min(74vh, 900px);"
-                                title="Pupilômetro Digital"
-                                loading="lazy"
-                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            @include('os.partials.pupilometro-embed', ['pupiloId' => 'pupilo-nova-os'])
                         </div>
                     </div>
 

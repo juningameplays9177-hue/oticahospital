@@ -311,12 +311,9 @@
             <h2>Pupilômetro Digital</h2>
             <p>Ferramenta auxiliar para medição pupilar dentro da Ordem de Serviço. Os dados permanecem no seu navegador.</p>
 
-            <iframe
-                src="{{ url('/pupilometro-digital') }}"
-                class="os-pupilometro-frame"
-                loading="lazy"
-                title="Pupilômetro Digital">
-            </iframe>
+            <div id="pupilometro-edit-embutido" class="rounded-xl overflow-hidden border border-slate-200 shadow-inner min-h-[480px]">
+                @include('os.partials.pupilometro-embed', ['pupiloId' => 'pupilo-edit-os'])
+            </div>
         </section>
     </div>
 
