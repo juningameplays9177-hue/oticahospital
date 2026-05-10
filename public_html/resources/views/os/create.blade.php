@@ -72,7 +72,7 @@
                             📋 Dados e Itens
                         </button>
                         <button type="button" onclick="switchTab('receita')" id="tab-receita" class="tab-btn px-6 py-3 text-xl font-bold text-slate-500 border-b-4 border-transparent whitespace-nowrap">
-                            👁️ Receita
+                            👁️ Receita · DNP
                         </button>
                         <button type="button" onclick="switchTab('pagamento')" id="tab-pagamento" class="tab-btn px-6 py-3 text-xl font-bold text-slate-500 border-b-4 border-transparent whitespace-nowrap">
                             💰 Pagamento
@@ -82,6 +82,108 @@
 
                 <!-- Tab: Dados e Itens (Unificada) -->
                 <div id="content-dados-itens" class="tab-content">
+                    <!-- PUPILÔMETRO: tudo dentro deste ficheiro (sem @include) — ideal para hospedagens web só carregarem este .blade -->
+                    <div id="hosOsPupiloAnchor" class="mb-8 rounded-xl overflow-hidden border-2 border-teal-500 shadow-lg bg-slate-900">
+                        <style>
+                            #hosOsPupilo{font-family:system-ui,Segoe UI,Roboto,sans-serif;background:#0b1220;color:#e5eef5;padding:14px;line-height:1.45;font-size:15px;}
+                            #hosOsPupilo *,#hosOsPupilo *::before,#hosOsPupilo *::after{box-sizing:border-box;}
+                            #hosOsPupilo .hp-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px;}
+                            #hosOsPupilo .hp-btn{cursor:pointer;border:0;font-weight:800;border-radius:10px;padding:10px 16px;font-size:14px;}
+                            #hosOsPupilo .hp-b1{background:linear-gradient(180deg,#2dd4bf,#14b8a6);color:#042f2e;}
+                            #hosOsPupilo .hp-b2{background:#243044;color:#e5eef5;border:1px solid #3d5266;}
+                            #hosOsPupilo .hp-b3{background:linear-gradient(180deg,#4ade80,#22c55e);color:#052e14;}
+                            #hosOsPupilo video{width:100%;max-height:260px;object-fit:cover;background:#111;}
+                            #hosOsPupilo .hp-vbox{border:2px solid #2dd4bf;border-radius:12px;overflow:hidden;background:#0f172a;min-height:120px;}
+                            #hosOsPupilo label.hp-l{display:block;font-size:11px;font-weight:800;color:#8da3b9;text-transform:uppercase;margin:6px 0 4px;}
+                            #hosOsPupilo input.hp-in{width:100%;padding:10px;border-radius:10px;border:1px solid #334155;background:#111827;color:#f8fafc;}
+                            #hosOsPupilo .hp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}@media(max-width:520px){#hosOsPupilo .hp-grid{grid-template-columns:1fr;}}
+                        </style>
+                        <div id="hosOsPupilo">
+                            <div class="text-center mb-2 px-2">
+                                <span class="text-xl font-black text-teal-300 tracking-tight inline-block mt-2">Pupilômetro Digital</span>
+                                <p class="text-sm text-slate-400 mt-1">DP em mm nesta zona — depois <strong class="text-teal-200">APLICAR DNP NA RECEITA</strong> preenche os campos LONGE/PERTO (mantidos ocultos na aba Receita).</p>
+                            </div>
+                            <div class="hp-vbox">
+                                <video id="hp_video" playsinline autoplay muted style="display:none"></video>
+                                <div id="hp_semCam" style="padding:40px;text-align:center;color:#94a3b8;display:block;line-height:1.5;"><span style="font-size:2.75rem;line-height:1" aria-hidden="true">📷</span><p class="mt-2 mb-0">Câmera inativa · pode trabalhar só com milímetros.</p></div>
+                            </div>
+                            <p id="hp_camMsg" style="color:#fca5a5;text-align:center;min-height:1.25em;margin:8px 6px;font-size:14px"></p>
+                            <div class="hp-row"><button type="button" class="hp-btn hp-b1" id="hp_camOn">Iniciar câmera</button><button type="button" class="hp-btn hp-b2" id="hp_camOff">Parar câmera</button></div>
+                            <div class="mt-4 mx-2 mb-4 p-3 rounded-lg border border-slate-700 bg-slate-900/85">
+                                <label class="hp-l" for="hp_pdTotal">Distância pupilar total (DP) · mm</label>
+                                <input class="hp-in" id="hp_pdTotal" type="text" inputmode="decimal" placeholder="ex: 62,5" autocomplete="off">
+                                <label class="hp-l" for="hp_deltaOd">Ajuste OD (+mm sobre o centro)</label>
+                                <input class="hp-in" id="hp_deltaOd" type="text" inputmode="decimal" value="0" placeholder="0">
+                                <div class="hp-grid mt-3">
+                                    <div><label class="hp-l">DNP OD · calcul.</label><input class="hp-in" id="hp_dnpo" readonly style="opacity:.92;background:#1e293b"></div>
+                                    <div><label class="hp-l">DNP OE · calcul.</label><input class="hp-in" id="hp_dnpe" readonly style="opacity:.92;background:#1e293b"></div>
+                                </div>
+                                <div class="hp-row mt-4">
+                                    <button type="button" class="hp-btn hp-b2" id="hp_recalc">Recalcular</button>
+                                    <button type="button" class="hp-btn hp-b3" id="hp_apply">APLICAR DNP NA RECEITA</button>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                        (function(){
+                            if(window.__hosPupiloNovaOs)return;
+                            window.__hosPupiloNovaOs=1;
+                            function el(id){return document.getElementById(id);}
+                            var stream=null;
+                            function num(x){if(x==null||String(x)==='')return NaN;return parseFloat(String(x).trim().replace(/\s+/g,'').replace(',','.'));}
+                            function fmt(v){return isFinite(v)?String(v.toFixed(1)).replace('.',','):'';}
+                            function recalc(){
+                                var pd=num(el('hp_pdTotal').value),d=num(el('hp_deltaOd').value);
+                                if(!isFinite(d))d=0;
+                                if(!isFinite(pd)||pd<=0){el('hp_dnpo').value='';el('hp_dnpe').value='';return;}
+                                var h=pd/2;el('hp_dnpo').value=fmt(h+d);el('hp_dnpe').value=fmt(h-d);
+                            }
+                            function cam(on){
+                                var v=el('hp_video'),placeholder=el('hp_semCam'),msg=el('hp_camMsg');
+                                msg.textContent='';
+                                if(!on){
+                                    if(stream){stream.getTracks().forEach(function(t){t.stop();});stream=null;}
+                                    try{v.srcObject=null;}catch(_){}
+                                    v.style.display='none';placeholder.style.display='block';return;
+                                }
+                                if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+                                    msg.textContent='Este dispositivo/navegador não expõe a câmera.';return;
+                                }
+                                navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'user'}},audio:false}).then(function(s){
+                                    stream=s;v.srcObject=s;v.style.display='block';placeholder.style.display='none';
+                                }).catch(function(){
+                                    msg.textContent='Sem permissão de câmera — use apenas os valores em mm.';
+                                    placeholder.style.display='block';v.style.display='none';
+                                });
+                            }
+                            function aplicarDnps(){
+                                recalc();
+                                var ao=el('hp_dnpo').value||'',ae=el('hp_dnpe').value||'';
+                                [['prescription_longe_dnp_od',ao],['prescription_longe_dnp_oe',ae],['prescription_perto_dnp_od',ao],['prescription_perto_dnp_oe',ae]].forEach(function(p){
+                                    var n=document.getElementById(p[0]);if(n)n.value=p[1];
+                                });
+                                try{localStorage.setItem('hos_hp_pd',el('hp_pdTotal').value);localStorage.setItem('hos_hp_dd',el('hp_deltaOd').value);}catch(_){}
+                            }
+                            function boot(){
+                                if(!el('hp_camOn'))return;
+                                el('hp_camOn').onclick=function(){cam(true);};
+                                el('hp_camOff').onclick=function(){cam(false);};
+                                el('hp_recalc').onclick=recalc;
+                                el('hp_apply').onclick=aplicarDnps;
+                                el('hp_pdTotal').oninput=function(){recalc();try{localStorage.setItem('hos_hp_pd',this.value);}catch(_){}};
+                                el('hp_deltaOd').oninput=function(){recalc();try{localStorage.setItem('hos_hp_dd',this.value);}catch(_){}};
+                                try{
+                                    var a=localStorage.getItem('hos_hp_pd'),b=localStorage.getItem('hos_hp_dd');
+                                    if(a!=null&&a!=='')el('hp_pdTotal').value=a;
+                                    if(b!=null&&b!=='')el('hp_deltaOd').value=b;
+                                }catch(_){}
+                                recalc();
+                            }
+                            if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+                        })();
+                        </script>
+                    </div>
+
                     <!-- Seção: Dados Básicos -->
                     <div class="mb-8 p-6 bg-slate-50 rounded-lg border-2 border-slate-300">
                         <h2 class="text-2xl md:text-3xl font-black text-slate-900 mb-6 pb-3 border-b-2 border-slate-400">
@@ -243,18 +345,12 @@
                     </div>
                 </div>
 
-                <!-- Tab: Receita — pupilômetro em destaque (campos de receita ficam ocultos para POST/scripts) -->
+                <!-- Tab: Receita (campos técnicos ocultos mantêm POST; pupilômetro no topo da aba Dados) -->
                 <div id="content-receita" class="tab-content hidden">
-                    <div class="rounded-xl border-2 border-cyan-600/55 bg-slate-950 overflow-hidden shadow-xl ring-1 ring-cyan-500/20">
-                        <div class="px-5 py-4 border-b border-slate-800 bg-slate-900/95">
-                            <h2 class="text-2xl md:text-3xl font-black text-white tracking-tight">Pupilômetro Digital</h2>
-                            <p class="text-sm md:text-base text-slate-400 mt-2 leading-relaxed">
-                                Ferramenta auxiliar para medição pupilar dentro da Ordem de Serviço. Os dados permanecem no seu navegador.
-                            </p>
-                        </div>
-                        <div class="bg-slate-950">
-                            @include('os.partials.pupilometro-embed', ['pupiloId' => 'pupilo-nova-os'])
-                        </div>
+                    <div class="p-6 bg-gradient-to-br from-blue-50 to-white rounded-xl border-2 border-blue-400 mb-4 shadow">
+                        <h2 class="text-2xl font-black text-slate-900 mb-2 flex flex-wrap items-center gap-2">📷 Pupilômetro já está disponível na primeira aba</h2>
+                        <p class="text-lg text-slate-700">Abra <strong>Dados e Itens</strong> — a ferramenta está <strong>logo no topo da página</strong>, antes dos dados do cliente e dos itens.</p>
+                        <button type="button" onclick="switchTab('dados-itens');document.getElementById('hosOsPupiloAnchor')?.scrollIntoView({behavior:'smooth',block:'start'});" class="mt-5 px-6 py-3 bg-blue-600 text-white text-lg font-bold rounded-lg hover:bg-blue-700">Ir ao Pupilômetro</button>
                     </div>
 
                     <div class="hidden" aria-hidden="true">
