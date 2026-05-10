@@ -20,7 +20,15 @@ function calculateStability(values: number[]) {
 
 export default function HomeClient() {
   const searchParams = useSearchParams();
-  const isEmbedded = searchParams.get("embedded") === "1";
+  const [isEmbedded, setIsEmbedded] = useState(false);
+
+  useEffect(() => {
+    try {
+      setIsEmbedded(typeof window !== "undefined" && window.parent !== window);
+    } catch {
+      setIsEmbedded(false);
+    }
+  }, []);
   const [cameraFacing, setCameraFacing] = useState<FacingMode>("user");
   const [video, setVideo] = useState<HTMLVideoElement | null>(null);
   const [status, setStatus] = useState("Aguardando inicializacao...");

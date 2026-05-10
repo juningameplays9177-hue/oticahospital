@@ -1,27 +1,21 @@
 @php
-    /** App Next estático em public/pupilometro (index.html); fallbacks legados */
+    /** App Next estático em public/pupilometro; fallbacks legados */
     $pupiloSrc = null;
     foreach ([
         'pupilometro/index.html',
         'pupilometro/index.php',
         'O.S/pupilometro/index.php',
     ] as $rel) {
-        if (file_exists(public_path($rel))) {
+        if (is_string($rel) && @is_readable(public_path($rel))) {
             $pupiloSrc = asset($rel);
             break;
         }
     }
-    $pupiloSrc = $pupiloSrc ?? asset('pupilometro/index.html');
-    if (
-        $pupiloSrc
-        && str_contains($pupiloSrc, '/pupilometro/')
-        && str_contains($pupiloSrc, 'index.html')
-        && !str_contains($pupiloSrc, 'embedded=')
-    ) {
-        $pupiloSrc .= (str_contains($pupiloSrc, '?') ? '&' : '?').'embedded=1';
+    if ($pupiloSrc === null) {
+        $pupiloSrc = asset('pupilometro/index.html');
     }
 @endphp
-<link rel="stylesheet" href="{{ asset('css/os-pupilometro.css') }}?v=3" />
+<link rel="stylesheet" href="{{ asset('css/os-pupilometro.css') }}?v=4" />
 <section class="os-pupilometro-section" aria-labelledby="os-pupilometro-heading">
     <div class="os-pupilometro-section__head">
         <h2 id="os-pupilometro-heading">Pupilômetro Digital</h2>
@@ -35,7 +29,6 @@
             class="os-pupilometro-frame"
             loading="lazy"
             title="Pupilômetro Digital — medição pupilar"
-            referrerpolicy="strict-origin-when-cross-origin"
             allow="camera; fullscreen"
         ></iframe>
     </div>
