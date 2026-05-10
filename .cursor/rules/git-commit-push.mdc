@@ -1,0 +1,14 @@
+---
+description: Após alterações no projeto, fazer commit e push para o remoto.
+alwaysApply: true
+---
+
+# Git após alterações
+
+Sempre que fizer alterações de código ou de assets neste repositório:
+
+1. Executar `git status` e incluir os ficheiros relevantes (`git add`).
+2. Fazer `git commit` com mensagem clara em português (frases completas).
+3. Fazer `git push` para o branch atual (normalmente `main`), salvo indicação contrária do utilizador.
+
+Se o push falhar, comunicar o erro e tentar resolver (credenciais, remoto, pull/rebase) antes de desistir.
