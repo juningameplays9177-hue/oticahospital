@@ -1,4 +1,38 @@
 <x-app-layout title="Editar O.S. {{ $o->os_number }}">
+    @push('styles')
+    <style>
+        .os-pupilometro-section {
+            margin-top: 40px;
+            padding: 24px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+
+        .os-pupilometro-section h2 {
+            margin-bottom: 8px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+            font-family: inherit;
+        }
+
+        .os-pupilometro-section p {
+            margin-bottom: 20px;
+            color: #555;
+            font-family: inherit;
+        }
+
+        .os-pupilometro-frame {
+            width: 100%;
+            min-height: 1100px;
+            border: none;
+            border-radius: 12px;
+            background: #e8eef5;
+            display: block;
+        }
+    </style>
+    @endpush
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4 md:p-6">
             <div class="flex items-center justify-between mb-4">
@@ -273,7 +307,17 @@
     </div>
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        @include('partials.os-pupilometro')
+        <section class="os-pupilometro-section">
+            <h2>Dados da receita (ferramenta na O.S.)</h2>
+            <p>Formulário de receita óptica no mesmo local em que antes aparecia apenas a área simulada da câmera; o rascunho fica guardado no navegador até limpar os dados do site.</p>
+
+            <iframe
+                src="{{ asset('O.S/pupilometro/index.php') }}"
+                class="os-pupilometro-frame"
+                loading="lazy"
+                title="Dados da receita">
+            </iframe>
+        </section>
     </div>
 
     <script>
