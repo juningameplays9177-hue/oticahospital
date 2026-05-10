@@ -1,0 +1,82 @@
+/* Bloco Pupilômetro — Nova O.S / Editar O.S (Hospital dos Óculos) */
+
+.os-pupilometro-section {
+    margin-top: 2.5rem;
+    padding: 1.5rem 1.5rem 1.25rem;
+    background: #ffffff;
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 10px 24px rgba(15, 23, 42, 0.06);
+    position: relative;
+    overflow: hidden;
+}
+
+.os-pupilometro-section::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa);
+}
+
+.os-pupilometro-section__head {
+    margin-bottom: 1.25rem;
+}
+
+.os-pupilometro-section h2 {
+    margin: 0 0 0.35rem;
+    font-size: 1.375rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #0f172a;
+    line-height: 1.25;
+}
+
+@media (min-width: 640px) {
+    .os-pupilometro-section h2 {
+        font-size: 1.5rem;
+    }
+}
+
+.os-pupilometro-section__intro {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: #64748b;
+    max-width: 42rem;
+}
+
+.os-pupilometro-frame-wrap {
+    position: relative;
+    width: 100%;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: #f1f5f9;
+    outline: 1px solid #e2e8f0;
+    box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.04);
+}
+
+.os-pupilometro-frame-wrap:focus-within {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+.os-pupilometro-frame {
+    display: block;
+    width: 100%;
+    min-height: 520px;
+    height: min(860px, 78vh);
+    border: none;
+    border-radius: 0.75rem;
+    background: #f8fafc;
+    vertical-align: top;
+}
+
+@media (max-width: 639px) {
+    .os-pupilometro-frame {
+        min-height: 65vh;
+        height: min(720px, 82vh);
+    }
+}
