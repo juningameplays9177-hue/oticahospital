@@ -1,0 +1,6 @@
+# Dependências e segredos (também há .gitignore em public_html/)
+**/node_modules/
+**/vendor/
+.env
+.env.*
+!.env.example
