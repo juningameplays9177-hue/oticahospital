@@ -32,11 +32,18 @@ if ! grep -q '^APP_KEY=base64:' .env 2>/dev/null; then
   php artisan key:generate --force
 fi
 
-# O projeto não tem migração da tabela `cache`; CACHE_STORE=database causa 500 após config:cache.
-if grep -q '^CACHE_STORE=database' .env 2>/dev/null; then
-  echo "==> A corrigir CACHE_STORE=database -> file no .env (backup: .env.bak.cachestore)"
-  cp -a .env .env.bak.cachestore
-  sed -i 's/^CACHE_STORE=database/CACHE_STORE=file/' .env
+# Sessões em BD exigem MySQL em cada pedido; se a BD falhar → 500 em todo o site.
+if grep -q '^SESSION_DRIVER=database' .env 2>/dev/null; then
+  echo "==> A corrigir SESSION_DRIVER=database -> file no .env (backup: .env.bak.session)"
+  cp -a .env .env.bak.session 2>/dev/null || cp .env .env.bak.session
+  sed -i 's/^SESSION_DRIVER=database/SESSION_DRIVER=file/' .env
+fi
+
+# Sem tabela jobs no projeto, queue database pode falhar em tarefas em background.
+if grep -q '^QUEUE_CONNECTION=database' .env 2>/dev/null; then
+  echo "==> A corrigir QUEUE_CONNECTION=database -> sync no .env (backup: .env.bak.queue)"
+  cp -a .env .env.bak.queue 2>/dev/null || cp .env .env.bak.queue
+  sed -i 's/^QUEUE_CONNECTION=database/QUEUE_CONNECTION=sync/' .env
 fi
 
 echo "==> Pastas de storage/framework"
@@ -71,7 +78,10 @@ php artisan route:clear || true
 
 echo "==> Otimizar para produção"
 php artisan config:cache
-php artisan route:cache
+if ! php artisan route:cache 2>/dev/null; then
+  echo "AVISO: route:cache falhou (memória PHP ou rotas). A limpar cache de rotas — o site continua sem route cache."
+  php artisan route:clear || true
+fi
 php artisan view:cache
 php artisan event:cache 2>/dev/null || true
 
@@ -80,4 +90,5 @@ if [[ "${DEPLOY_MIGRATE:-0}" == "1" ]]; then
   php artisan migrate --force
 fi
 
-echo "==> Feito. Se ainda houver 500, corre: tail -n 100 storage/logs/laravel.log"
+echo "==> Feito. Testa no browser: https://SEU-DOMINIO/__ping (deve mostrar OK)."
+echo "    Depois: tail -n 100 storage/logs/laravel.log"
