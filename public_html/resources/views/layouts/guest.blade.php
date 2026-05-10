@@ -11,8 +11,8 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=inter:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <!-- Scripts (Vite ou fallback CDN quando public/build falta no servidor) -->
+        <x-vite-or-fallback :with-axios="false" />
     </head>
     <body class="font-sans antialiased">
         {{ $slot }}
