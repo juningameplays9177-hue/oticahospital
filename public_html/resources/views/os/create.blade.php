@@ -243,107 +243,25 @@
                     </div>
                 </div>
 
-                <!-- Tab: Receita -->
+                <!-- Tab: Receita — pupilômetro num único iframe (sem nova aba) -->
                 <div id="content-receita" class="tab-content hidden">
-                    <style>
-                        .manual-pupilo-wrap { margin-bottom: 1rem; border-radius: 1rem; border: 2px solid rgba(16,185,229,0.45); background: #0f172a; color: #e2e8f0; overflow: hidden; }
-                        .manual-pupilo-head { text-align: center; padding: 1rem 1.25rem 0.5rem; }
-                        .manual-pupilo-head h3 { margin: 0; font-size: 1.5rem; font-weight: 900; color: #fff; }
-                        .manual-pupilo-head p { margin: 0.35rem 0 0; font-size: 0.9rem; color: #94a3b8; line-height: 1.35; }
-                        .manual-pupilo-cam { margin: 0.75rem 1rem 0; border: 2px solid rgba(16,185,229,0.35); border-radius: 0.75rem; background: rgba(2,8,23,0.95); padding: 1rem; text-align: center; }
-                        .manual-pupilo-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem; justify-content: center; }
-                        .manual-pupilo-actions button { cursor: pointer; border-radius: 0.65rem; padding: 0.55rem 1rem; font-weight: 700; font-size: 0.85rem; }
-                        .manual-pupilo-actions .btn-cam-start { background: #22d3ee; color: #0f172a; border: none; }
-                        .manual-pupilo-actions .btn-cam-stop { background: rgba(51,65,85,0.9); color: #e2e8f0; border: 1px solid rgba(148,163,184,0.5); }
-                        .manual-pupilo-form { padding: 1rem 1.25rem 1.25rem; border: 2px solid rgba(226,232,240,0.15); margin: 1rem 1rem; border-radius: 0.75rem; background: rgba(15,23,42,0.6); }
-                        .manual-pupilo-grid { display: grid; gap: 0.75rem; grid-template-columns: 1fr; }
-                        @media (min-width: 768px) { .manual-pupilo-grid.two { grid-template-columns: 1fr 1fr; } }
-                        .manual-pupilo-label { display: block; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.06em; color: #94a3b8; margin-bottom: 0.25rem; }
-                        .manual-pupilo-field { width: 100%; padding: 0.5rem 0.65rem; border-radius: 0.5rem; border: 2px solid rgba(148,163,184,0.35); background: rgba(2,8,23,0.9); color: #f8fafc; font-size: 1rem; font-weight: 600; }
-                        .manual-pupilo-field.out { border-color: rgba(34,211,238,0.55); font-family: ui-monospace, monospace; color: #6ee7b7; }
-                        .manual-pupilo-buttons { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
-                        .manual-pupilo-buttons .btn-recalc { background: rgba(51,65,85,0.95); color: #e2e8f0; border: 1px solid rgba(148,163,184,0.45); padding: 0.55rem 1rem; border-radius: 0.65rem; font-weight: 700; cursor: pointer; }
-                        .manual-pupilo-buttons .btn-apply { flex: 1; min-width: 12rem; background: linear-gradient(#6ee7b7, #34d399); color: #0f172a; border: none; padding: 0.75rem 1rem; border-radius: 0.65rem; font-weight: 900; font-size: 0.95rem; cursor: pointer; box-shadow: 0 8px 20px rgba(16,185,129,0.25); }
-                    </style>
-                    <div class="manual-pupilo-wrap manual-pupilo-os">
-                        <div class="manual-pupilo-head">
-                            <h3>Pupilômetro Digital</h3>
-                            <p>
-                                DP em mm nesta zona — depois <strong class="text-cyan-400">APLICAR DNP NA RECEITA</strong>
-                                preenche os DNPs na aba Receita (<span class="text-slate-300">LONGE e PERTO</span>).
+                    <div class="overflow-hidden rounded-2xl border-2 border-cyan-600/60 bg-slate-950 shadow-2xl">
+                        <div class="border-b border-slate-800 bg-slate-900 px-5 py-5">
+                            <h2 class="text-2xl md:text-3xl font-black text-white tracking-tight text-center md:text-left">
+                                Pupilômetro digital
+                            </h2>
+                            <p class="mt-2 text-sm md:text-base text-slate-400 text-center md:text-left leading-relaxed max-w-3xl">
+                                Medição local de distância pupilar (PD), calibração, histórico e ficha da receita —
+                                tudo no quadro abaixo. Ao <strong class="text-slate-200">salvar</strong> uma medição ou
+                                <strong class="text-slate-200">aplicar</strong> no histórico, os campos de receita ocultos da O.S. são preenchidos automaticamente nesta página.
                             </p>
-                        </div>
-                        <div class="manual-pupilo-cam" aria-live="polite">
-                            <p class="m-0 text-slate-300 text-sm md:text-base">📷 <span>Câmera inativa · pode trabalhar só com milímetros.</span></p>
-                            <div class="manual-pupilo-actions">
-                                <button type="button" class="btn-cam-start" onclick="manualPupiloScrollCam(true)">Iniciar câmera</button>
-                                <button type="button" class="btn-cam-stop" onclick="manualPupiloScrollCam(false)">Parar câmera</button>
-                            </div>
-                        </div>
-                        <div class="manual-pupilo-form">
-                            <div class="manual-pupilo-grid two">
-                                <div>
-                                    <label class="manual-pupilo-label" for="manual_pupilo_dp_mm">DISTÂNCIA PUPILAR TOTAL (DP) · MM</label>
-                                    <input type="text" id="manual_pupilo_dp_mm" class="manual-pupilo-field" inputmode="decimal" placeholder="ex: 62,5" autocomplete="off">
-                                </div>
-                                <div>
-                                    <label class="manual-pupilo-label" for="manual_pupilo_adj_od_mm">AJUSTE OD (+MM SOBRE O CENTRO)</label>
-                                    <input type="text" id="manual_pupilo_adj_od_mm" class="manual-pupilo-field" inputmode="decimal" placeholder="0" value="0" autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="manual-pupilo-grid two" style="margin-top: .75rem">
-                                <div>
-                                    <label class="manual-pupilo-label">DNP OD · CALCUL. (longe)</label>
-                                    <input type="text" id="manual_pupilo_dnp_od_longe" class="manual-pupilo-field out" readonly placeholder="—">
-                                </div>
-                                <div>
-                                    <label class="manual-pupilo-label">DNP OE · CALCUL. (longe)</label>
-                                    <input type="text" id="manual_pupilo_dnp_oe_longe" class="manual-pupilo-field out" readonly placeholder="—">
-                                </div>
-                            </div>
-                            <p class="mt-2 mb-0 text-xs text-slate-500">
-                                Informe a distância pupilar (DP) em mm para calcular DNP OD e OE (longe; perto usa o mesmo modelo de inseto −2,5 mm na DP total).
-                            </p>
-                            <div class="manual-pupilo-buttons">
-                                <button type="button" class="btn-recalc" onclick="manualPupiloRecalculate()">Recalcular</button>
-                                <button type="button" class="btn-apply" onclick="manualPupiloApplyToReceitaOs()">APLICAR DNP NA RECEITA</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-6 overflow-hidden rounded-2xl border-2 border-cyan-600/60 bg-slate-950 shadow-2xl">
-                        <div class="flex flex-col gap-2 border-b border-slate-800 bg-slate-900 px-5 py-4 md:flex-row md:items-center md:justify-between">
-                            <div>
-                                <h2 class="text-2xl md:text-3xl font-black text-white">Câmera e histórico (pupilômetro)</h2>
-                                <p class="mt-1 text-sm md:text-base text-slate-400">
-                                    Medição com deteção facial. Use também o modo manual em cima, se preferir só milímetros.
-                                </p>
-                            </div>
-                            <div class="flex flex-wrap gap-2">
-                                <a
-                                    href="{{ asset('pupilometro-next/index.html') }}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="inline-flex items-center justify-center rounded-lg border border-cyan-500/40 px-4 py-2 text-sm font-bold text-cyan-200 hover:bg-cyan-500/10"
-                                >
-                                    Pupilômetro · nova aba
-                                </a>
-                                <a
-                                    href="{{ asset('pupilometro-next/receita/index.html') }}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="inline-flex items-center justify-center rounded-lg border border-emerald-500/40 px-4 py-2 text-sm font-bold text-emerald-200 hover:bg-emerald-500/10"
-                                >
-                                    Ficha receita · nova aba
-                                </a>
-                            </div>
                         </div>
                         <iframe
                             id="pupilometro-os-iframe"
                             src="{{ asset('pupilometro-next/index.html') }}"
-                            title="Pupilômetro Digital"
+                            title="Pupilômetro digital"
                             class="block w-full border-0 bg-slate-950"
-                            style="height: min(860px, 78vh); min-height: 680px;"
+                            style="height: min(1020px, 88vh); min-height: 760px;"
                             loading="lazy"
                             allow="camera; fullscreen"
                             referrerpolicy="same-origin">
@@ -1697,95 +1615,7 @@
                 }
             });
 
-            ['manual_pupilo_dp_mm', 'manual_pupilo_adj_od_mm'].forEach(function (id) {
-                var el = document.getElementById(id);
-                if (el) el.addEventListener('input', function () { manualPupiloRecalculate(); });
-            });
-            if (typeof manualPupiloRecalculate === 'function') {
-                manualPupiloRecalculate();
-            }
         });
-
-        function manualPupiloParseMm(val) {
-            if (val === null || val === undefined || val === '') return NaN;
-            return parseFloat(String(val).trim().replace(/\s+/g, '').replace(',', '.'));
-        }
-
-        window.manualPupiloRecalculate = function () {
-            var dp = manualPupiloParseMm(document.getElementById('manual_pupilo_dp_mm') && document.getElementById('manual_pupilo_dp_mm').value);
-            var adj = manualPupiloParseMm(document.getElementById('manual_pupilo_adj_od_mm') && document.getElementById('manual_pupilo_adj_od_mm').value);
-            if (!Number.isFinite(adj)) adj = 0;
-            var odEl = document.getElementById('manual_pupilo_dnp_od_longe');
-            var oeEl = document.getElementById('manual_pupilo_dnp_oe_longe');
-            if (!odEl || !oeEl) return;
-            if (!Number.isFinite(dp) || dp <= 0) {
-                odEl.value = '';
-                oeEl.value = '';
-                return;
-            }
-            var half = dp / 2;
-            odEl.value = (half + adj).toFixed(1);
-            oeEl.value = (half - adj).toFixed(1);
-        };
-
-        window.manualPupiloApplyToReceitaOs = function () {
-            var dp = manualPupiloParseMm(document.getElementById('manual_pupilo_dp_mm') && document.getElementById('manual_pupilo_dp_mm').value);
-            var adj = manualPupiloParseMm(document.getElementById('manual_pupilo_adj_od_mm') && document.getElementById('manual_pupilo_adj_od_mm').value);
-            if (!Number.isFinite(adj)) adj = 0;
-            if (!Number.isFinite(dp) || dp <= 0) {
-                alert('Informe a distância pupilar total (DP) em mm válida.');
-                return;
-            }
-            var half = dp / 2;
-            var longeOd = (half + adj).toFixed(1);
-            var longeOe = (half - adj).toFixed(1);
-            var near = Math.max(dp - 2.5, 0);
-            var nh = near / 2;
-            var pertoOd = (nh + adj).toFixed(1);
-            var pertoOe = (nh - adj).toFixed(1);
-            try { localStorage.setItem('pupilometro-pd-mm', String(dp)); } catch (err) {}
-
-            var map = {
-                custom_longe_esferico_od: '0.00',
-                custom_longe_cilindrico_od: '0.00',
-                custom_longe_eixo_od: '180',
-                custom_longe_altura_od: '',
-                custom_longe_dnp_od: longeOd,
-                custom_longe_esferico_oe: '0.00',
-                custom_longe_cilindrico_oe: '0.00',
-                custom_longe_eixo_oe: '180',
-                custom_longe_altura_oe: '',
-                custom_longe_dnp_oe: longeOe,
-                custom_perto_esferico_od: '0.00',
-                custom_perto_cilindrico_od: '0.00',
-                custom_perto_eixo_od: '180',
-                custom_perto_altura_od: '',
-                custom_perto_dnp_od: pertoOd,
-                custom_perto_esferico_oe: '0.00',
-                custom_perto_cilindrico_oe: '0.00',
-                custom_perto_eixo_oe: '180',
-                custom_perto_altura_oe: '',
-                custom_perto_dnp_oe: pertoOe,
-                custom_adicao: '',
-                custom_doctor_name: ''
-            };
-            Object.keys(map).forEach(function (key) {
-                var el = document.querySelector('[name="prescription[' + key + ']"]');
-                if (el) el.value = map[key];
-            });
-            alert('DNP aplicados aos campos da receita da O.S. (LONGE e PERTO). Esféricos, cilindro e eixo em modelo neutro; ajuste se necessário.');
-        };
-
-        /** Rola até o iframe do pupilômetro (uso dos botões do modo manual). */
-        window.manualPupiloScrollCam = function (scrollTo) {
-            var fr = document.getElementById('pupilometro-os-iframe');
-            if (scrollTo && fr) {
-                fr.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                fr.focus && fr.focus({ preventScroll: true });
-                return;
-            }
-            alert('Para parar as imagens feche esta aba ou use os botões frontal/traseira dentro do pupilômetro abaixo.');
-        };
 
         function setPrescriptionDnpFromPdTotal(pdMm) {
             const safe = Number.isFinite(pdMm) && pdMm > 0 ? pdMm : null;
