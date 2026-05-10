@@ -313,7 +313,7 @@
 
             <div id="pupilometro-edit-embutido" class="overflow-hidden rounded-2xl border-2 border-cyan-600/60 bg-slate-950 shadow-2xl">
                 <iframe
-                    src="{{ asset('pupilometro-next/index.html') }}"
+                    src="{{ route('pupilometro.next') }}"
                     title="Pupilômetro Digital"
                     class="block w-full border-0 bg-slate-950"
                     style="height: min(860px, 78vh); min-height: 680px;"

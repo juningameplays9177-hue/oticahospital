@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Finance;
+use App\Http\Controllers\PupilometroNextStaticController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -125,6 +126,15 @@ Route::middleware('auth')->group(function () {
 Route::get('/manifest.json', [\App\Http\Controllers\PwaController::class, 'manifest'])->name('manifest');
 Route::get('/sw.js', [\App\Http\Controllers\PwaController::class, 'serviceWorker'])->name('service-worker');
 
+/*
+| Pupilômetro Next — público. Uma única rota com {tail?} e regex .* para _next/static/.../ficheiros.js
+*/
+Route::redirect('/pupilometro-digital', '/pupilometro-next', 302)->name('pupilometro.digital');
+
+Route::match(['get', 'head'], '/pupilometro-next/{tail?}', [PupilometroNextStaticController::class, 'dispatch'])
+    ->where('tail', '.*')
+    ->name('pupilometro.next');
+
 // Dashboard
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
     ->middleware(['auth'])
@@ -208,8 +218,6 @@ Route::middleware('auth')->group(function () {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     })->name('api.products.nextCode');
-
-    Route::redirect('pupilometro-digital', '/pupilometro-next/index.html')->name('pupilometro.digital');
 
     // Rotas de Ordens de Serviço
     Route::get('os/buscar-produto', [\App\Http\Controllers\ProductsLookupController::class, 'index'])->name('os.products.lookup');

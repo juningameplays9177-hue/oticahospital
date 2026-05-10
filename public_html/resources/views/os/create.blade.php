@@ -7,63 +7,208 @@
                     🔍 Consulta
                 </a>
             </div>
-            
-            <!-- Cabeçalho com Tipo e Número -->
-            <div class="mb-6 pb-4 border-b-2 border-slate-300">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
-                        <h1 class="text-3xl md:text-4xl font-black text-slate-900 mb-2">Nova Ordem de Serviço</h1>
-                        <!-- Seletor OS / Conserto -->
-                        <div class="flex items-center gap-4 mb-3">
-                            <span class="text-lg md:text-xl font-bold text-slate-600">Tipo:</span>
-                            <div class="flex gap-2">
-                                <button type="button" id="tipo-os-btn" onclick="setTipoOs(false)" class="tipo-btn active px-5 py-2.5 text-lg font-bold rounded-lg border-2 transition-colors bg-blue-600 text-white border-blue-700 shadow">
-                                    📋 OS
-                                </button>
-                                <button type="button" id="tipo-conserto-btn" onclick="setTipoOs(true)" class="tipo-btn px-5 py-2.5 text-lg font-bold rounded-lg border-2 transition-colors bg-slate-200 text-slate-700 border-slate-400 hover:bg-slate-300">
-                                    🔧 Conserto
-                                </button>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="text-lg md:text-xl font-bold text-slate-600">Número:</span>
-                            <span id="os_number_display" class="text-2xl md:text-3xl font-black text-blue-600 bg-blue-50 px-4 py-2 rounded-lg border-2 border-blue-300">
-                                Carregando...
-                            </span>
-                        </div>
-                    </div>
-                    <div class="flex gap-3">
-                        <a href="{{ route('os.index') }}" class="px-6 py-3 text-lg bg-slate-200 text-slate-800 font-bold rounded-lg hover:bg-slate-300 transition-colors">
-                            ❌ Cancelar
-                        </a>
-                        <button type="button" id="finalizarOsBtn" class="px-6 py-3 text-lg bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors shadow-lg">
-                            ✅ Finalizar OS
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            @if($errors->any())
-                <div class="mb-6 p-4 bg-red-100 border-2 border-red-400 rounded-lg">
-                    <h3 class="text-xl font-black text-red-900 mb-2">❌ Erros de Validação:</h3>
-                    <ul class="list-disc list-inside text-red-900 text-lg font-semibold">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="mb-6 p-4 bg-red-100 border-2 border-red-400 rounded-lg">
-                    <h3 class="text-xl font-black text-red-900 mb-2">❌ Erro:</h3>
-                    <p class="text-red-900 text-lg font-semibold">{{ session('error') }}</p>
-                </div>
-            @endif
 
             <form method="POST" action="{{ route('os.store') }}" enctype="multipart/form-data" id="osForm">
                 @csrf
                 <input type="hidden" id="is_conserto" name="is_conserto" value="0">
+
+                @if($errors->any())
+                    <div class="mb-6 p-4 bg-red-100 border-2 border-red-400 rounded-lg">
+                        <h3 class="text-xl font-black text-red-900 mb-2">❌ Erros de Validação:</h3>
+                        <ul class="list-disc list-inside text-red-900 text-lg font-semibold">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @if(session('error'))
+                    <div class="mb-6 p-4 bg-red-100 border-2 border-red-400 rounded-lg">
+                        <h3 class="text-xl font-black text-red-900 mb-2">❌ Erro:</h3>
+                        <p class="text-red-900 text-lg font-semibold">{{ session('error') }}</p>
+                    </div>
+                @endif
+
+                <!-- Pupilômetro digital + receita no topo da página (abaixo do botão Consulta) -->
+                <div id="hosReceitaTopo" class="mb-8 scroll-mt-24">
+                    <div class="overflow-hidden rounded-2xl border-2 border-cyan-600/60 bg-slate-950 shadow-2xl">
+                        <div class="border-b border-slate-800 bg-slate-900 px-5 py-5">
+                            <h2 class="text-2xl md:text-3xl font-black text-white tracking-tight text-center md:text-left">
+                                Pupilômetro digital
+                            </h2>
+                            <p class="mt-2 text-sm md:text-base text-slate-400 text-center md:text-left leading-relaxed max-w-3xl">
+                                Medição local de distância pupilar (PD), calibração, histórico e ficha da receita —
+                                tudo no quadro abaixo. Ao <strong class="text-slate-200">salvar</strong> uma medição ou
+                                <strong class="text-slate-200">aplicar</strong> no histórico, os campos de receita desta O.S. são preenchidos automaticamente nesta página.
+                            </p>
+                        </div>
+                        <iframe
+                            id="pupilometro-os-iframe"
+                            src="{{ route('pupilometro.next') }}"
+                            title="Pupilômetro digital"
+                            class="block w-full border-0 bg-slate-950"
+                            style="height: min(1020px, 88vh); min-height: 760px;"
+                            loading="lazy"
+                            allow="camera; fullscreen"
+                            referrerpolicy="same-origin">
+                        </iframe>
+                    </div>
+
+                    <div class="mb-6 rounded-xl border-2 border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
+                        <h2 class="text-2xl font-black text-slate-900 mb-4 pb-2 border-b-2 border-blue-200 flex flex-wrap items-center gap-2">👁️ DADOS DA RECEITA</h2>
+                        <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+                            <p class="text-sm text-slate-600 max-w-3xl">
+                                Use o botão <strong class="text-slate-800">APLICAR NA RECEITA</strong> no pupilômetro acima (aba Dados) ou preencha no app do iframe. Para trazer tudo o que está guardado no navegador (DP + rascunho da receita do pupilômetro):
+                            </p>
+                            <button type="button" onclick="hosPullPupilometroIntoReceita()" class="shrink-0 rounded-lg border-2 border-cyan-600 bg-cyan-50 px-4 py-2 text-sm font-bold text-cyan-900 hover:bg-cyan-100">
+                                Importar do Pupilômetro (localStorage)
+                            </button>
+                        </div>
+                        <div id="prescription_fields" class="space-y-6">
+                            <!-- LONGE -->
+                            <div>
+                                <h3 class="text-xl font-black mb-4 text-slate-800">LONGE</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-5 gap-3 text-lg">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD Esférico</label>
+                                        <input type="text" id="prescription_longe_esferico_od" name="prescription[custom_longe_esferico_od]" placeholder="OD Esférico" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD Cilíndrico</label>
+                                        <input type="text" id="prescription_longe_cilindrico_od" name="prescription[custom_longe_cilindrico_od]" placeholder="OD Cilíndrico" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD Eixo</label>
+                                        <input type="text" id="prescription_longe_eixo_od" name="prescription[custom_longe_eixo_od]" placeholder="OD Eixo" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD Altura</label>
+                                        <input type="text" id="prescription_longe_altura_od" name="prescription[custom_longe_altura_od]" placeholder="OD Altura" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD DNP</label>
+                                        <input type="text" id="prescription_longe_dnp_od" name="prescription[custom_longe_dnp_od]" placeholder="OD DNP" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE Esférico</label>
+                                        <input type="text" id="prescription_longe_esferico_oe" name="prescription[custom_longe_esferico_oe]" placeholder="OE Esférico" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE Cilíndrico</label>
+                                        <input type="text" id="prescription_longe_cilindrico_oe" name="prescription[custom_longe_cilindrico_oe]" placeholder="OE Cilíndrico" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE Eixo</label>
+                                        <input type="text" id="prescription_longe_eixo_oe" name="prescription[custom_longe_eixo_oe]" placeholder="OE Eixo" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE Altura</label>
+                                        <input type="text" id="prescription_longe_altura_oe" name="prescription[custom_longe_altura_oe]" placeholder="OE Altura" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE DNP</label>
+                                        <input type="text" id="prescription_longe_dnp_oe" name="prescription[custom_longe_dnp_oe]" placeholder="OE DNP" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PERTO -->
+                            <div>
+                                <h3 class="text-xl font-black mb-4 text-slate-800">PERTO</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-5 gap-3 text-lg">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD Esférico</label>
+                                        <input type="text" id="prescription_perto_esferico_od" name="prescription[custom_perto_esferico_od]" placeholder="OD Esférico" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD Cilíndrico</label>
+                                        <input type="text" id="prescription_perto_cilindrico_od" name="prescription[custom_perto_cilindrico_od]" placeholder="OD Cilíndrico" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD Eixo</label>
+                                        <input type="text" id="prescription_perto_eixo_od" name="prescription[custom_perto_eixo_od]" placeholder="OD Eixo" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD Altura</label>
+                                        <input type="text" id="prescription_perto_altura_od" name="prescription[custom_perto_altura_od]" placeholder="OD Altura" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD DNP</label>
+                                        <input type="text" id="prescription_perto_dnp_od" name="prescription[custom_perto_dnp_od]" placeholder="OD DNP" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE Esférico</label>
+                                        <input type="text" id="prescription_perto_esferico_oe" name="prescription[custom_perto_esferico_oe]" placeholder="OE Esférico" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE Cilíndrico</label>
+                                        <input type="text" id="prescription_perto_cilindrico_oe" name="prescription[custom_perto_cilindrico_oe]" placeholder="OE Cilíndrico" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE Eixo</label>
+                                        <input type="text" id="prescription_perto_eixo_oe" name="prescription[custom_perto_eixo_oe]" placeholder="OE Eixo" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE Altura</label>
+                                        <input type="text" id="prescription_perto_altura_oe" name="prescription[custom_perto_altura_oe]" placeholder="OE Altura" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE DNP</label>
+                                        <input type="text" id="prescription_perto_dnp_oe" name="prescription[custom_perto_dnp_oe]" placeholder="OE DNP" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Adição e Médico -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-lg font-bold text-slate-900 mb-2">Adição</label>
+                                    <input type="text" id="prescription_adicao" name="prescription[custom_adicao]" class="w-full text-lg px-4 py-3 rounded-lg border-2 border-slate-400 font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-lg font-bold text-slate-900 mb-2">Médico</label>
+                                    <input type="text" name="prescription[custom_doctor_name]" id="prescription_doctor_name" class="w-full text-lg px-4 py-3 rounded-lg border-2 border-slate-400 font-semibold">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cabeçalho com Tipo e Número -->
+                <div class="mb-6 pb-4 border-b-2 border-slate-300">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <h1 class="text-3xl md:text-4xl font-black text-slate-900 mb-2">Nova Ordem de Serviço</h1>
+                            <!-- Seletor OS / Conserto -->
+                            <div class="flex items-center gap-4 mb-3">
+                                <span class="text-lg md:text-xl font-bold text-slate-600">Tipo:</span>
+                                <div class="flex gap-2">
+                                    <button type="button" id="tipo-os-btn" onclick="setTipoOs(false)" class="tipo-btn active px-5 py-2.5 text-lg font-bold rounded-lg border-2 transition-colors bg-blue-600 text-white border-blue-700 shadow">
+                                        📋 OS
+                                    </button>
+                                    <button type="button" id="tipo-conserto-btn" onclick="setTipoOs(true)" class="tipo-btn px-5 py-2.5 text-lg font-bold rounded-lg border-2 transition-colors bg-slate-200 text-slate-700 border-slate-400 hover:bg-slate-300">
+                                        🔧 Conserto
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-lg md:text-xl font-bold text-slate-600">Número:</span>
+                                <span id="os_number_display" class="text-2xl md:text-3xl font-black text-blue-600 bg-blue-50 px-4 py-2 rounded-lg border-2 border-blue-300">
+                                    Carregando...
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <a href="{{ route('os.index') }}" class="px-6 py-3 text-lg bg-slate-200 text-slate-800 font-bold rounded-lg hover:bg-slate-300 transition-colors">
+                                ❌ Cancelar
+                            </a>
+                            <button type="button" id="finalizarOsBtn" class="px-6 py-3 text-lg bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors shadow-lg">
+                                ✅ Finalizar OS
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Tabs Simplificadas -->
                 <div class="mb-6 border-b-2 border-slate-300">
@@ -243,139 +388,16 @@
                     </div>
                 </div>
 
-                <!-- Tab: Receita — pupilômetro num único iframe (sem nova aba) -->
+                <!-- Tab: Receita — atalho (conteúdo em #hosReceitaTopo no topo do formulário) -->
                 <div id="content-receita" class="tab-content hidden">
-                    <div class="overflow-hidden rounded-2xl border-2 border-cyan-600/60 bg-slate-950 shadow-2xl">
-                        <div class="border-b border-slate-800 bg-slate-900 px-5 py-5">
-                            <h2 class="text-2xl md:text-3xl font-black text-white tracking-tight text-center md:text-left">
-                                Pupilômetro digital
-                            </h2>
-                            <p class="mt-2 text-sm md:text-base text-slate-400 text-center md:text-left leading-relaxed max-w-3xl">
-                                Medição local de distância pupilar (PD), calibração, histórico e ficha da receita —
-                                tudo no quadro abaixo. Ao <strong class="text-slate-200">salvar</strong> uma medição ou
-                                <strong class="text-slate-200">aplicar</strong> no histórico, os campos de receita ocultos da O.S. são preenchidos automaticamente nesta página.
-                            </p>
-                        </div>
-                        <iframe
-                            id="pupilometro-os-iframe"
-                            src="{{ asset('pupilometro-next/index.html') }}"
-                            title="Pupilômetro digital"
-                            class="block w-full border-0 bg-slate-950"
-                            style="height: min(1020px, 88vh); min-height: 760px;"
-                            loading="lazy"
-                            allow="camera; fullscreen"
-                            referrerpolicy="same-origin">
-                        </iframe>
-                    </div>
-
-                    <div class="hidden" aria-hidden="true">
-                        <div id="prescription_fields" class="space-y-6">
-                            <!-- LONGE -->
-                            <div>
-                                <h3 class="text-xl font-black mb-4 text-slate-800">LONGE</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-5 gap-3 text-lg">
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD Esférico</label>
-                                        <input type="text" id="prescription_longe_esferico_od" name="prescription[custom_longe_esferico_od]" placeholder="OD Esférico" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD Cilíndrico</label>
-                                        <input type="text" id="prescription_longe_cilindrico_od" name="prescription[custom_longe_cilindrico_od]" placeholder="OD Cilíndrico" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD Eixo</label>
-                                        <input type="text" id="prescription_longe_eixo_od" name="prescription[custom_longe_eixo_od]" placeholder="OD Eixo" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD Altura</label>
-                                        <input type="text" id="prescription_longe_altura_od" name="prescription[custom_longe_altura_od]" placeholder="OD Altura" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD DNP</label>
-                                        <input type="text" id="prescription_longe_dnp_od" name="prescription[custom_longe_dnp_od]" placeholder="OD DNP" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE Esférico</label>
-                                        <input type="text" id="prescription_longe_esferico_oe" name="prescription[custom_longe_esferico_oe]" placeholder="OE Esférico" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE Cilíndrico</label>
-                                        <input type="text" id="prescription_longe_cilindrico_oe" name="prescription[custom_longe_cilindrico_oe]" placeholder="OE Cilíndrico" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE Eixo</label>
-                                        <input type="text" id="prescription_longe_eixo_oe" name="prescription[custom_longe_eixo_oe]" placeholder="OE Eixo" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE Altura</label>
-                                        <input type="text" id="prescription_longe_altura_oe" name="prescription[custom_longe_altura_oe]" placeholder="OE Altura" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE DNP</label>
-                                        <input type="text" id="prescription_longe_dnp_oe" name="prescription[custom_longe_dnp_oe]" placeholder="OE DNP" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- PERTO -->
-                            <div>
-                                <h3 class="text-xl font-black mb-4 text-slate-800">PERTO</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-5 gap-3 text-lg">
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD Esférico</label>
-                                        <input type="text" id="prescription_perto_esferico_od" name="prescription[custom_perto_esferico_od]" placeholder="OD Esférico" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD Cilíndrico</label>
-                                        <input type="text" id="prescription_perto_cilindrico_od" name="prescription[custom_perto_cilindrico_od]" placeholder="OD Cilíndrico" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD Eixo</label>
-                                        <input type="text" id="prescription_perto_eixo_od" name="prescription[custom_perto_eixo_od]" placeholder="OD Eixo" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD Altura</label>
-                                        <input type="text" id="prescription_perto_altura_od" name="prescription[custom_perto_altura_od]" placeholder="OD Altura" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OD DNP</label>
-                                        <input type="text" id="prescription_perto_dnp_od" name="prescription[custom_perto_dnp_od]" placeholder="OD DNP" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE Esférico</label>
-                                        <input type="text" id="prescription_perto_esferico_oe" name="prescription[custom_perto_esferico_oe]" placeholder="OE Esférico" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE Cilíndrico</label>
-                                        <input type="text" id="prescription_perto_cilindrico_oe" name="prescription[custom_perto_cilindrico_oe]" placeholder="OE Cilíndrico" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE Eixo</label>
-                                        <input type="text" id="prescription_perto_eixo_oe" name="prescription[custom_perto_eixo_oe]" placeholder="OE Eixo" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE Altura</label>
-                                        <input type="text" id="prescription_perto_altura_oe" name="prescription[custom_perto_altura_oe]" placeholder="OE Altura" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-700 mb-1">OE DNP</label>
-                                        <input type="text" id="prescription_perto_dnp_oe" name="prescription[custom_perto_dnp_oe]" placeholder="OE DNP" class="w-full px-3 py-2 rounded-lg border-2 border-slate-400 font-semibold">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Adição e Médico -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-lg font-bold text-slate-900 mb-2">Adição</label>
-                                    <input type="text" id="prescription_adicao" name="prescription[custom_adicao]" class="w-full text-lg px-4 py-3 rounded-lg border-2 border-slate-400 font-semibold">
-                                </div>
-                                <div>
-                                    <label class="block text-lg font-bold text-slate-900 mb-2">Médico</label>
-                                    <input type="text" name="prescription[custom_doctor_name]" id="prescription_doctor_name" class="w-full text-lg px-4 py-3 rounded-lg border-2 border-slate-400 font-semibold">
-                                </div>
-                            </div>
-                        </div>
+                    <div class="rounded-xl border-2 border-cyan-200 bg-gradient-to-br from-cyan-50 to-slate-50 p-8 text-center shadow-sm">
+                        <p class="text-lg text-slate-800 mb-2 font-bold">👁️ Receita e pupilômetro</p>
+                        <p class="text-slate-600 mb-6 max-w-2xl mx-auto leading-relaxed">
+                            O pupilômetro (iframe) e todos os campos da receita — <strong>LONGE</strong>, <strong>PERTO</strong>, <strong>Adição</strong> e <strong>Médico</strong> — estão no <strong>topo desta página</strong>, logo abaixo do botão Consulta.
+                        </p>
+                        <button type="button" class="inline-flex items-center gap-2 rounded-lg border-2 border-cyan-600 bg-cyan-600 px-6 py-3 text-lg font-bold text-white shadow hover:bg-cyan-700" onclick="var e=document.getElementById('hosReceitaTopo'); if(e) e.scrollIntoView({behavior:'smooth',block:'start'});">
+                            ↑ Ir para pupilômetro e dados da receita
+                        </button>
                     </div>
                 </div>
 
@@ -718,6 +740,14 @@
             if (tabName === 'pagamento') {
                 updatePaymentTotal();
                 updatePaymentClientDisplay();
+            }
+            if (tabName === 'receita') {
+                var rt = document.getElementById('hosReceitaTopo');
+                if (rt) {
+                    setTimeout(function () {
+                        rt.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 50);
+                }
             }
         }
         
@@ -1621,8 +1651,9 @@
             const safe = Number.isFinite(pdMm) && pdMm > 0 ? pdMm : null;
             if (safe === null) return false;
 
-            const longe = (safe / 2).toFixed(1);
-            const perto = (Math.max(safe - 2.5, 0) / 2).toFixed(1);
+            const fmtMm = (n) => String(Number(n).toFixed(1)).replace('.', ',');
+            const longe = fmtMm(safe / 2);
+            const perto = fmtMm(Math.max(safe - 2.5, 0) / 2);
             const pairs = [
                 ['prescription_longe_dnp_od', longe],
                 ['prescription_longe_dnp_oe', longe],
@@ -1640,50 +1671,63 @@
 
         window.syncPupilometroNextToReceita = function () {
             try {
+                let ok = false;
+
                 const latestRaw = localStorage.getItem('pupilometro-history');
                 if (latestRaw) {
-                    const parsed = JSON.parse(latestRaw);
-                    const latest = Array.isArray(parsed) ? parsed[0] : null;
-                    if (latest && latest.dnp) {
-                        const map = {
-                            custom_longe_esferico_od: '0.00',
-                            custom_longe_cilindrico_od: '0.00',
-                            custom_longe_eixo_od: '180',
-                            custom_longe_altura_od: '',
-                            custom_longe_dnp_od: latest.dnp.longeOd || '',
-                            custom_longe_esferico_oe: '0.00',
-                            custom_longe_cilindrico_oe: '0.00',
-                            custom_longe_eixo_oe: '180',
-                            custom_longe_altura_oe: '',
-                            custom_longe_dnp_oe: latest.dnp.longeOe || '',
-                            custom_perto_esferico_od: '0.00',
-                            custom_perto_cilindrico_od: '0.00',
-                            custom_perto_eixo_od: '180',
-                            custom_perto_altura_od: '',
-                            custom_perto_dnp_od: latest.dnp.pertoOd || '',
-                            custom_perto_esferico_oe: '0.00',
-                            custom_perto_cilindrico_oe: '0.00',
-                            custom_perto_eixo_oe: '180',
-                            custom_perto_altura_oe: '',
-                            custom_perto_dnp_oe: latest.dnp.pertoOe || '',
-                            custom_adicao: '',
-                            custom_doctor_name: ''
-                        };
-                        Object.keys(map).forEach(function (key) {
-                            var el = document.querySelector('[name="prescription[' + key + ']"]');
-                            if (el) el.value = map[key];
-                        });
-                        return true;
-                    }
+                    try {
+                        const parsed = JSON.parse(latestRaw);
+                        const latest = Array.isArray(parsed) ? parsed[0] : null;
+                        if (latest && latest.dnp) {
+                            const map = {
+                                custom_longe_esferico_od: '0.00',
+                                custom_longe_cilindrico_od: '0.00',
+                                custom_longe_eixo_od: '180',
+                                custom_longe_altura_od: '',
+                                custom_longe_dnp_od: latest.dnp.longeOd || '',
+                                custom_longe_esferico_oe: '0.00',
+                                custom_longe_cilindrico_oe: '0.00',
+                                custom_longe_eixo_oe: '180',
+                                custom_longe_altura_oe: '',
+                                custom_longe_dnp_oe: latest.dnp.longeOe || '',
+                                custom_perto_esferico_od: '0.00',
+                                custom_perto_cilindrico_od: '0.00',
+                                custom_perto_eixo_od: '180',
+                                custom_perto_altura_od: '',
+                                custom_perto_dnp_od: latest.dnp.pertoOd || '',
+                                custom_perto_esferico_oe: '0.00',
+                                custom_perto_cilindrico_oe: '0.00',
+                                custom_perto_eixo_oe: '180',
+                                custom_perto_altura_oe: '',
+                                custom_perto_dnp_oe: latest.dnp.pertoOe || '',
+                                custom_adicao: '',
+                                custom_doctor_name: ''
+                            };
+                            Object.keys(map).forEach(function (key) {
+                                var el = document.querySelector('[name="prescription[' + key + ']"]');
+                                if (el) el.value = map[key];
+                            });
+                            ok = true;
+                        }
+                    } catch (e) { /* noop */ }
                 }
 
-                const raw = localStorage.getItem('pupilometro-pd-mm');
-                if (!raw) return false;
-
-                const pdMm = parseFloat(String(raw).replace(',', '.'));
-                return setPrescriptionDnpFromPdTotal(pdMm);
+                const rawPd = localStorage.getItem('pupilometro-pd-mm');
+                if (rawPd) {
+                    const pdMm = parseFloat(String(rawPd).replace(',', '.'));
+                    if (setPrescriptionDnpFromPdTotal(pdMm)) ok = true;
+                }
+                if (typeof window.hosApplyOpticaReceitaDraftFromStorage === 'function') {
+                    if (window.hosApplyOpticaReceitaDraftFromStorage()) ok = true;
+                }
+                if (typeof window.calcularReceitaPerto === 'function') {
+                    try {
+                        window.calcularReceitaPerto();
+                    } catch (e) { /* noop */ }
+                }
+                return ok;
             } catch (err) {
-                console.warn('Não foi possível sincronizar DP do pupilômetro Next:', err);
+                console.warn('Não foi possível sincronizar dados do pupilômetro:', err);
                 return false;
             }
         };
@@ -1692,12 +1736,27 @@
             window.syncPupilometroNextToReceita();
         });
 
-        /** DNP vindos de integrações antigas do pupilômetro (mesmo domínio) */
+        /** DNP e/ou receita completa vindos do pupilômetro (postMessage, mesmo domínio) */
         window.addEventListener('message', function (event) {
             try {
                 if (event.origin !== window.location.origin) return;
                 var d = event.data;
-                if (!d || d.type !== 'opticahospital-pupilometro' || !d.payload) return;
+                if (!d || !d.type) return;
+                if (d.type === 'opticahospital-receita-draft' && d.draft) {
+                    try {
+                        localStorage.setItem('optica-receita-draft', JSON.stringify(d.draft));
+                    } catch (e) { /* noop */ }
+                    if (typeof window.hosApplyOpticaReceitaDraftFromStorage === 'function') {
+                        window.hosApplyOpticaReceitaDraftFromStorage();
+                    }
+                    if (typeof window.calcularReceitaPerto === 'function') {
+                        try {
+                            window.calcularReceitaPerto();
+                        } catch (e2) { /* noop */ }
+                    }
+                    return;
+                }
+                if (d.type !== 'opticahospital-pupilometro' || !d.payload) return;
                 var p = d.payload;
                 function set(id, val) {
                     var el = document.getElementById(id);
@@ -1716,6 +1775,8 @@
                 set('prescription_longe_dnp_oe', p.longe_dnp_oe || '');
                 set('prescription_perto_dnp_od', p.perto_dnp_od || '');
                 set('prescription_perto_dnp_oe', p.perto_dnp_oe || '');
+                if (p.longe_esferico_od != null) set('prescription_longe_esferico_od', String(p.longe_esferico_od).replace('.', ','));
+                if (p.longe_esferico_oe != null) set('prescription_longe_esferico_oe', String(p.longe_esferico_oe).replace('.', ','));
             } catch (err) { /* noop */ }
         });
 
@@ -1829,6 +1890,111 @@
                 }
             }
         }
+
+        function hosFmtRxNum(s) {
+            if (s == null || String(s).trim() === '') return null;
+            return String(s).trim().replace(/\./g, ',');
+        }
+
+        window.hosFillNeutralRxIfEmpty = function () {
+            const rows = [
+                ['prescription_longe_esferico_od', '0,00'],
+                ['prescription_longe_cilindrico_od', '0,00'],
+                ['prescription_longe_eixo_od', '180'],
+                ['prescription_longe_esferico_oe', '0,00'],
+                ['prescription_longe_cilindrico_oe', '0,00'],
+                ['prescription_longe_eixo_oe', '180'],
+                ['prescription_perto_esferico_od', '0,00'],
+                ['prescription_perto_cilindrico_od', '0,00'],
+                ['prescription_perto_eixo_od', '180'],
+                ['prescription_perto_esferico_oe', '0,00'],
+                ['prescription_perto_cilindrico_oe', '0,00'],
+                ['prescription_perto_eixo_oe', '180'],
+            ];
+            rows.forEach(function (pair) {
+                const node = document.getElementById(pair[0]);
+                if (node && !String(node.value || '').trim()) node.value = pair[1];
+            });
+            [['od', 'prescription_longe_altura_od', 'prescription_perto_altura_od'], ['oe', 'prescription_longe_altura_oe', 'prescription_perto_altura_oe']].forEach(function (tri) {
+                const lo = document.getElementById(tri[1]);
+                const pe = document.getElementById(tri[2]);
+                if (lo && pe && !String(pe.value || '').trim() && String(lo.value || '').trim()) pe.value = lo.value;
+            });
+        };
+
+        window.hosApplyOpticaReceitaDraftFromStorage = function () {
+            try {
+                const raw = localStorage.getItem('optica-receita-draft');
+                if (!raw) return false;
+                const draft = JSON.parse(raw);
+                const L = draft.longe;
+                const P = draft.perto;
+                function setIf(id, v) {
+                    if (v == null || String(v).trim() === '') return;
+                    const node = document.getElementById(id);
+                    const t = hosFmtRxNum(v);
+                    if (node && t != null) node.value = t;
+                }
+                if (L) {
+                    if (L.od) {
+                        setIf('prescription_longe_esferico_od', L.od.esferico);
+                        setIf('prescription_longe_cilindrico_od', L.od.cilindrico);
+                        setIf('prescription_longe_eixo_od', L.od.eixo);
+                        setIf('prescription_longe_altura_od', L.od.altura);
+                        setIf('prescription_longe_dnp_od', L.od.dnp);
+                    }
+                    if (L.oe) {
+                        setIf('prescription_longe_esferico_oe', L.oe.esferico);
+                        setIf('prescription_longe_cilindrico_oe', L.oe.cilindrico);
+                        setIf('prescription_longe_eixo_oe', L.oe.eixo);
+                        setIf('prescription_longe_altura_oe', L.oe.altura);
+                        setIf('prescription_longe_dnp_oe', L.oe.dnp);
+                    }
+                }
+                if (P) {
+                    if (P.od) {
+                        setIf('prescription_perto_esferico_od', P.od.esferico);
+                        setIf('prescription_perto_cilindrico_od', P.od.cilindrico);
+                        setIf('prescription_perto_eixo_od', P.od.eixo);
+                        setIf('prescription_perto_altura_od', P.od.altura);
+                        setIf('prescription_perto_dnp_od', P.od.dnp);
+                    }
+                    if (P.oe) {
+                        setIf('prescription_perto_esferico_oe', P.oe.esferico);
+                        setIf('prescription_perto_cilindrico_oe', P.oe.cilindrico);
+                        setIf('prescription_perto_eixo_oe', P.oe.eixo);
+                        setIf('prescription_perto_altura_oe', P.oe.altura);
+                        setIf('prescription_perto_dnp_oe', P.oe.dnp);
+                    }
+                }
+                if (draft.adicao != null && String(draft.adicao).trim() !== '') {
+                    const ad = document.getElementById('prescription_adicao');
+                    const ta = hosFmtRxNum(draft.adicao);
+                    if (ad && ta != null) ad.value = ta;
+                }
+                if (draft.medico != null && String(draft.medico).trim() !== '') {
+                    const md = document.getElementById('prescription_doctor_name');
+                    if (md) md.value = String(draft.medico);
+                }
+                return true;
+            } catch (e) {
+                console.warn('[OS] optica-receita-draft:', e);
+                return false;
+            }
+        };
+
+        window.hosPullPupilometroIntoReceita = function () {
+            const n = typeof window.syncPupilometroNextToReceita === 'function' ? window.syncPupilometroNextToReceita() : false;
+            if (!n) {
+                alert('Não há dados do pupilômetro no navegador. Meça a DP no pupilômetro no topo desta página (aba Dados do app) ou preencha a receita, depois tente de novo.');
+            } else {
+                try {
+                    switchTab('receita');
+                } catch (e) { /* noop */ }
+            }
+        };
+
+        window.calcularReceitaPerto = calcularReceitaPerto;
 
         // Configurar listeners para cálculo automático
         document.addEventListener('DOMContentLoaded', function() {

@@ -5,6 +5,11 @@
 
     RewriteEngine On
 
+    # Pupilômetro Next: se o ficheiro existe em public/pupilometro-next, servir já aqui (evita 404 por regras estranhas)
+    RewriteCond %{REQUEST_URI} ^/pupilometro-next/
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
     # Forçar HTTPS (redirecionar HTTP para HTTPS)
     RewriteCond %{HTTPS} off
     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
