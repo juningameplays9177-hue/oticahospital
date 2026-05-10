@@ -147,8 +147,8 @@ class OsController extends Controller
             $sources = ServiceOrder::distinct()->whereNotNull('source')->pluck('source')->sort()->values();
 
             return view('os.index', compact('serviceOrders', 'companies', 'stores', 'employees', 'sources'));
-        } catch (\Exception $e) {
-            // Se houver erro (ex: tabela não existe), mostrar página vazia com mensagem
+        } catch (\Throwable $e) {
+            Log::warning('OsController@index falhou – listagem recuperada.', ['message' => $e->getMessage()]);
             return view('os.index', [
                 'serviceOrders' => new \Illuminate\Pagination\LengthAwarePaginator([], 0, 50),
                 'companies' => collect([]),

@@ -91,7 +91,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
-        @media (max-width: 480px) {
+        @@media (max-width: 480px) {
             #{{ $pupiloId }}.pupilo-scope-root .grid-pd { grid-template-columns: 1fr; }
         }
         #{{ $pupiloId }}.pupilo-scope-root label.p-lab {

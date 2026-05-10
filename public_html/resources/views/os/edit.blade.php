@@ -325,7 +325,7 @@
                             #hosOsPupiloEd .hp-vbox{border:2px solid #2dd4bf;border-radius:12px;overflow:hidden;background:#0f172a;min-height:120px;}
                             #hosOsPupiloEd label.hp-l{display:block;font-size:11px;font-weight:800;color:#8da3b9;text-transform:uppercase;margin:6px 0 4px;}
                             #hosOsPupiloEd input.hp-in{width:100%;padding:10px;border-radius:10px;border:1px solid #334155;background:#111827;color:#f8fafc;}
-                            #hosOsPupiloEd .hp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}@media(max-width:520px){#hosOsPupiloEd .hp-grid{grid-template-columns:1fr;}}
+                            #hosOsPupiloEd .hp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}@@media(max-width:520px){#hosOsPupiloEd .hp-grid{grid-template-columns:1fr;}}
                         </style>
                         <div id="hosOsPupiloEd">
                             <div class="text-center mb-2 px-2">
