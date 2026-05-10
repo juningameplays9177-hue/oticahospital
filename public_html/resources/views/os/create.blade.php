@@ -243,12 +243,28 @@
                     </div>
                 </div>
 
-                <!-- Tab: Receita -->
+                <!-- Tab: Receita — pupilômetro em destaque (campos de receita ficam ocultos para POST/scripts) -->
                 <div id="content-receita" class="tab-content hidden">
-                    <div class="p-6 bg-purple-50 rounded-lg border-2 border-purple-400">
-                        <h2 class="text-2xl md:text-3xl font-black text-slate-900 mb-6 pb-3 border-b-2 border-purple-500">
-                            👁️ DADOS DA RECEITA
-                        </h2>
+                    <div class="rounded-xl border-2 border-cyan-600/55 bg-slate-950 overflow-hidden shadow-xl ring-1 ring-cyan-500/20">
+                        <div class="px-5 py-4 border-b border-slate-800 bg-slate-900/95">
+                            <h2 class="text-2xl md:text-3xl font-black text-white tracking-tight">Pupilômetro Digital</h2>
+                            <p class="text-sm md:text-base text-slate-400 mt-2 leading-relaxed">
+                                Ferramenta auxiliar para medição pupilar dentro da Ordem de Serviço. Os dados permanecem no seu navegador.
+                            </p>
+                        </div>
+                        <div class="bg-slate-950">
+                            <iframe
+                                id="iframePupilometroNovaOs"
+                                src="{{ url('/pupilometro-digital') }}"
+                                class="w-full border-0 block bg-slate-950"
+                                style="min-height: 640px; height: min(74vh, 900px);"
+                                title="Pupilômetro Digital"
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div>
+
+                    <div class="hidden" aria-hidden="true">
                         <div id="prescription_fields" class="space-y-6">
                             <!-- LONGE -->
                             <div>
@@ -352,7 +368,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-lg font-bold text-slate-900 mb-2">Médico</label>
-                                    <input type="text" name="prescription[custom_doctor_name]" class="w-full text-lg px-4 py-3 rounded-lg border-2 border-slate-400 font-semibold">
+                                    <input type="text" name="prescription[custom_doctor_name]" id="prescription_doctor_name" class="w-full text-lg px-4 py-3 rounded-lg border-2 border-slate-400 font-semibold">
                                 </div>
                             </div>
                         </div>
@@ -428,10 +444,6 @@
                 </div>
             </form>
         </div>
-    </div>
-
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
-        @include('partials.os-pupilometro')
     </div>
 
     <style>
@@ -1594,6 +1606,24 @@
                     }
                 }
             });
+        });
+
+        /** DNP vindos do iframe do pupilômetro (mesmo domínio) */
+        window.addEventListener('message', function (event) {
+            try {
+                if (event.origin !== window.location.origin) return;
+                var d = event.data;
+                if (!d || d.type !== 'opticahospital-pupilometro' || !d.payload) return;
+                var p = d.payload;
+                function set(id, val) {
+                    var el = document.getElementById(id);
+                    if (el && typeof val === 'string') el.value = val;
+                }
+                set('prescription_longe_dnp_od', p.longe_dnp_od || '');
+                set('prescription_longe_dnp_oe', p.longe_dnp_oe || '');
+                set('prescription_perto_dnp_od', p.perto_dnp_od || '');
+                set('prescription_perto_dnp_oe', p.perto_dnp_oe || '');
+            } catch (err) { /* noop */ }
         });
 
         // ========== CÁLCULO AUTOMÁTICO DA RECEITA ==========

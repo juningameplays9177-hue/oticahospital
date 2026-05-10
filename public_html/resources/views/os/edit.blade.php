@@ -308,14 +308,14 @@
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         <section class="os-pupilometro-section">
-            <h2>Dados da receita (ferramenta na O.S.)</h2>
-            <p>Formulário de receita óptica no mesmo local em que antes aparecia apenas a área simulada da câmera; o rascunho fica guardado no navegador até limpar os dados do site.</p>
+            <h2>Pupilômetro Digital</h2>
+            <p>Ferramenta auxiliar para medição pupilar dentro da Ordem de Serviço. Os dados permanecem no seu navegador.</p>
 
             <iframe
-                src="{{ asset('O.S/pupilometro/index.php') }}"
+                src="{{ url('/pupilometro-digital') }}"
                 class="os-pupilometro-frame"
                 loading="lazy"
-                title="Dados da receita">
+                title="Pupilômetro Digital">
             </iframe>
         </section>
     </div>
