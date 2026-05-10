@@ -20,6 +20,7 @@ function calculateStability(values: number[]) {
 
 export default function HomeClient() {
   const searchParams = useSearchParams();
+  const isEmbedded = searchParams.get("embedded") === "1";
   const [cameraFacing, setCameraFacing] = useState<FacingMode>("user");
   const [video, setVideo] = useState<HTMLVideoElement | null>(null);
   const [status, setStatus] = useState("Aguardando inicializacao...");
@@ -159,25 +160,41 @@ export default function HomeClient() {
   return (
     <>
       <main
-        className="min-h-screen bg-bg px-4 py-6 pb-40"
+        className={isEmbedded ? "min-h-screen bg-bg px-3 py-3 pb-36" : "min-h-screen bg-bg px-4 py-6 pb-40"}
         style={{
           minHeight: "100vh",
           backgroundColor: "#09090b",
           color: "#e2e8f0",
-          paddingBottom: "10rem"
+          paddingBottom: isEmbedded ? "8.5rem" : "10rem"
         }}
       >
-        <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
+        <div className="mx-auto flex w-full max-w-xl flex-col gap-3 sm:gap-4">
           <header className="text-center" style={{ textAlign: "center" }}>
-            <h1
-              className="text-3xl font-bold tracking-tight text-cyan-300"
-              style={{ color: "#67e8f9", fontSize: "1.75rem", margin: "0 0 0.25rem 0" }}
-            >
-              Pupilometro Digital
-            </h1>
-            <p className="mt-1 text-sm text-slate-400" style={{ color: "#94a3b8", margin: 0 }}>
-              Medicao local da distancia pupilar (PD)
-            </p>
+            {isEmbedded ? (
+              <p
+                className="text-sm font-semibold uppercase tracking-wide text-cyan-400/90"
+                style={{ color: "#22d3ee", margin: "0 0 0.35rem 0", letterSpacing: "0.06em" }}
+              >
+                Medição pupilar (O.S.)
+              </p>
+            ) : (
+              <>
+                <h1
+                  className="text-3xl font-bold tracking-tight text-cyan-300"
+                  style={{ color: "#67e8f9", fontSize: "1.75rem", margin: "0 0 0.25rem 0" }}
+                >
+                  Pupilometro Digital
+                </h1>
+                <p className="mt-1 text-sm text-slate-400" style={{ color: "#94a3b8", margin: 0 }}>
+                  Medicao local da distancia pupilar (PD)
+                </p>
+              </>
+            )}
+            {isEmbedded ? (
+              <p className="text-xs text-slate-500" style={{ color: "#64748b", margin: 0 }}>
+                Use a câmera traseira se precisar de mais distância. Dados só no seu navegador.
+              </p>
+            ) : null}
           </header>
 
           <section className="glass rounded-3xl p-2 sm:p-3" style={{ opacity: 1 }}>

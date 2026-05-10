@@ -12,6 +12,14 @@
         }
     }
     $pupiloSrc = $pupiloSrc ?? asset('pupilometro/index.html');
+    if (
+        $pupiloSrc
+        && str_contains($pupiloSrc, '/pupilometro/')
+        && str_contains($pupiloSrc, 'index.html')
+        && !str_contains($pupiloSrc, 'embedded=')
+    ) {
+        $pupiloSrc .= (str_contains($pupiloSrc, '?') ? '&' : '?').'embedded=1';
+    }
 @endphp
 <link rel="stylesheet" href="{{ asset('css/os-pupilometro.css') }}?v=3" />
 <section class="os-pupilometro-section" aria-labelledby="os-pupilometro-heading">

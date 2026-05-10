@@ -1,0 +1,9 @@
+{
+  "name": "oticahospital-monorepo",
+  "private": true,
+  "description": "Laravel em public_html/; pupilômetro em PUPILOMETRO/. Após alterar o pupilômetro: npm run pupilometro:sync (Windows: npm run pupilometro:sync:ps1 se o passo Node falhar)",
+  "scripts": {
+    "pupilometro:sync": "npm run export:laravel --prefix PUPILOMETRO",
+    "pupilometro:sync:ps1": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/sync-pupilometro.ps1"
+  }
+}
