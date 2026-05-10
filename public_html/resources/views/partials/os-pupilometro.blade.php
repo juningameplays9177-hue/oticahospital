@@ -6,7 +6,7 @@
         'pupilometro/index.php',
         'O.S/pupilometro/index.php',
     ] as $rel) {
-        if (is_string($rel) && @is_readable(public_path($rel))) {
+        if (is_string($rel) && is_readable(public_path($rel))) {
             $pupiloSrc = asset($rel);
             break;
         }

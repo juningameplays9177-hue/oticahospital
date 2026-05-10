@@ -1,38 +1,4 @@
 <x-app-layout title="Editar O.S. {{ $o->os_number }}">
-    @push('styles')
-    <style>
-        .os-pupilometro-section {
-            margin-top: 40px;
-            padding: 24px;
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-        }
-
-        .os-pupilometro-section h2 {
-            margin-bottom: 8px;
-            font-size: 24px;
-            font-weight: 700;
-            color: #0f172a;
-            font-family: inherit;
-        }
-
-        .os-pupilometro-section p {
-            margin-bottom: 20px;
-            color: #555;
-            font-family: inherit;
-        }
-
-        .os-pupilometro-frame {
-            width: 100%;
-            min-height: 1100px;
-            border: none;
-            border-radius: 12px;
-            background: #e8eef5;
-            display: block;
-        }
-    </style>
-    @endpush
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4 md:p-6">
             <div class="flex items-center justify-between mb-4">
@@ -307,86 +273,10 @@
     </div>
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <section class="os-pupilometro-section">
-            <h2>Pupilômetro Digital</h2>
-            <p>Ferramenta auxiliar para medição pupilar dentro da Ordem de Serviço. Os dados permanecem no seu navegador.</p>
-
-            <div id="pupilometro-edit-embutido" class="rounded-xl overflow-hidden border border-slate-200 shadow-inner min-h-[480px] bg-slate-900">
-                <div id="hosOsPupiloEditWrap" class="rounded-xl overflow-hidden border-2 border-teal-500">
-                        <style>
-                            #hosOsPupiloEd{font-family:system-ui,Segoe UI,Roboto,sans-serif;background:#0b1220;color:#e5eef5;padding:14px;line-height:1.45;font-size:15px;}
-                            #hosOsPupiloEd *,#hosOsPupiloEd *::before,#hosOsPupiloEd *::after{box-sizing:border-box;}
-                            #hosOsPupiloEd .hp-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px;}
-                            #hosOsPupiloEd .hp-btn{cursor:pointer;border:0;font-weight:800;border-radius:10px;padding:10px 16px;font-size:14px;}
-                            #hosOsPupiloEd .hp-b1{background:linear-gradient(180deg,#2dd4bf,#14b8a6);color:#042f2e;}
-                            #hosOsPupiloEd .hp-b2{background:#243044;color:#e5eef5;border:1px solid #3d5266;}
-                            #hosOsPupiloEd .hp-b3{background:linear-gradient(180deg,#4ade80,#22c55e);color:#052e14;}
-                            #hosOsPupiloEd video{width:100%;max-height:260px;object-fit:cover;background:#111;}
-                            #hosOsPupiloEd .hp-vbox{border:2px solid #2dd4bf;border-radius:12px;overflow:hidden;background:#0f172a;min-height:120px;}
-                            #hosOsPupiloEd label.hp-l{display:block;font-size:11px;font-weight:800;color:#8da3b9;text-transform:uppercase;margin:6px 0 4px;}
-                            #hosOsPupiloEd input.hp-in{width:100%;padding:10px;border-radius:10px;border:1px solid #334155;background:#111827;color:#f8fafc;}
-                            #hosOsPupiloEd .hp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}@@media(max-width:520px){#hosOsPupiloEd .hp-grid{grid-template-columns:1fr;}}
-                        </style>
-                        <div id="hosOsPupiloEd">
-                            <div class="text-center mb-2 px-2">
-                                <span class="text-xl font-black text-teal-300 tracking-tight inline-block mt-2">Pupilômetro Digital</span>
-                                <p class="text-sm text-slate-400 mt-1">Use os mm e <strong class="text-teal-200">aplique DNP</strong> se esta página tiver os campos correspondentes.</p>
-                            </div>
-                            <div class="hp-vbox">
-                                <video id="hpe_video" playsinline autoplay muted style="display:none"></video>
-                                <div id="hpe_semCam" style="padding:40px;text-align:center;color:#94a3b8;display:block;line-height:1.5;"><span style="font-size:2.75rem;line-height:1" aria-hidden="true">📷</span><p class="mt-2 mb-0">Câmera inativa.</p></div>
-                            </div>
-                            <p id="hpe_camMsg" style="color:#fca5a5;text-align:center;min-height:1.25em;margin:8px 6px;font-size:14px"></p>
-                            <div class="hp-row"><button type="button" class="hp-btn hp-b1" id="hpe_camOn">Iniciar câmera</button><button type="button" class="hp-btn hp-b2" id="hpe_camOff">Parar câmera</button></div>
-                            <div class="mt-4 mx-2 mb-4 p-3 rounded-lg border border-slate-700 bg-slate-900/85">
-                                <label class="hp-l" for="hpe_pdTotal">DP total · mm</label>
-                                <input class="hp-in" id="hpe_pdTotal" type="text" inputmode="decimal" placeholder="ex: 62,5">
-                                <label class="hp-l" for="hpe_deltaOd">Ajuste OD</label>
-                                <input class="hp-in" id="hpe_deltaOd" type="text" inputmode="decimal" value="0">
-                                <div class="hp-grid mt-3">
-                                    <div><label class="hp-l">DNP OD</label><input class="hp-in" id="hpe_dnpo" readonly style="opacity:.92;background:#1e293b"></div>
-                                    <div><label class="hp-l">DNP OE</label><input class="hp-in" id="hpe_dnpe" readonly style="opacity:.92;background:#1e293b"></div>
-                                </div>
-                                <div class="hp-row mt-4">
-                                    <button type="button" class="hp-btn hp-b2" id="hpe_recalc">Recalcular</button>
-                                    <button type="button" class="hp-btn hp-b3" id="hpe_apply">APLICAR DNP</button>
-                                </div>
-                            </div>
-                        </div>
-                        <script>
-                        (function(){
-                            if(window.__hosPupiloEdit)return;
-                            window.__hosPupiloEdit=1;
-                            function q(i){return document.getElementById(i);}
-                            var stream=null;
-                            function num(x){if(x==null||String(x)==='')return NaN;return parseFloat(String(x).trim().replace(/\s+/g,'').replace(',','.'));}
-                            function fmt(v){return isFinite(v)?String(v.toFixed(1)).replace('.',','):'';}
-                            function recalc(){
-                                var pd=num(q('hpe_pdTotal').value),d=num(q('hpe_deltaOd').value);
-                                if(!isFinite(d))d=0;
-                                if(!isFinite(pd)||pd<=0){q('hpe_dnpo').value='';q('hpe_dnpe').value='';return;}
-                                var h=pd/2;q('hpe_dnpo').value=fmt(h+d);q('hpe_dnpe').value=fmt(h-d);
-                            }
-                            function cam(on){
-                                var v=q('hpe_video'),ph=q('hpe_semCam'),msg=q('hpe_camMsg');msg.textContent='';
-                                if(!on){if(stream){stream.getTracks().forEach(function(t){t.stop();});stream=null;}try{v.srcObject=null}catch(_){} v.style.display='none';ph.style.display='block';return;}
-                                if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){msg.textContent='Câmera indisponível.';return;}
-                                navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'user'}},audio:false}).then(function(s){stream=s;v.srcObject=s;v.style.display='block';ph.style.display='none';}).catch(function(){msg.textContent='Permissão negada ou bloqueada.'});
-                            }
-                            function aplicar(){recalc();var ao=q('hpe_dnpo').value||'',ae=q('hpe_dnpe').value||'';
-                              [['prescription_longe_dnp_od',ao],['prescription_longe_dnp_oe',ae],['prescription_perto_dnp_od',ao],['prescription_perto_dnp_oe',ae]].forEach(function(p){var n=document.getElementById(p[0]);if(n)n.value=p[1];});}
-                            function boot(){if(!q('hpe_camOn'))return;
-                              q('hpe_camOn').onclick=function(){cam(true);};q('hpe_camOff').onclick=function(){cam(false);};q('hpe_recalc').onclick=recalc;q('hpe_apply').onclick=aplicar;
-                              q('hpe_pdTotal').oninput=recalc;q('hpe_deltaOd').oninput=recalc;recalc();}
-                            if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-                        })();
-                        </script>
-                </div>
-            </div>
-        </section>
+        @include('partials.os-pupilometro')
     </div>
 
-    <script>
+    <script>    <script>
         // Função para confirmar marcação como ENTREGUE com verificação de saldo
         async function confirmMarcarEntregue(osId) {
             try {
