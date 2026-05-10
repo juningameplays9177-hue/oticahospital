@@ -1,4 +1,8 @@
-<!DOCTYPE html>
+<?php
+declare(strict_types=1);
+
+header('Content-Type: text/html; charset=utf-8');
+?><!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
@@ -232,10 +236,8 @@
       return;
     }
     var metade = pd / 2;
-    var dOd = metade + delta;
-    var dOe = metade - delta;
-    document.getElementById('dnpOd').value = formatMm(dOd);
-    document.getElementById('dnpOe').value = formatMm(dOe);
+    document.getElementById('dnpOd').value = formatMm(metade + delta);
+    document.getElementById('dnpOe').value = formatMm(metade - delta);
   }
 
   function mostrarPlaceholder(on) {
@@ -299,15 +301,17 @@
     atualizarDnps();
     var od = document.getElementById('dnpOd').value;
     var oe = document.getElementById('dnpOe').value;
-    var payload = {
-      longe_dnp_od: od,
-      longe_dnp_oe: oe,
-      perto_dnp_od: od,
-      perto_dnp_oe: oe
-    };
     try {
       if (window.parent && window.parent !== window) {
-        window.parent.postMessage({ type: 'opticahospital-pupilometro', payload: payload }, window.location.origin);
+        window.parent.postMessage({
+          type: 'opticahospital-pupilometro',
+          payload: {
+            longe_dnp_od: od,
+            longe_dnp_oe: oe,
+            perto_dnp_od: od,
+            perto_dnp_oe: oe
+          }
+        }, window.location.origin);
       }
     } catch (e) {}
     guardarLocal();
@@ -326,7 +330,6 @@
   mostrarPlaceholder(true);
   carregarLocal();
   atualizarDnps();
-
   window.addEventListener('beforeunload', parar);
 })();
   </script>
