@@ -209,18 +209,7 @@ Route::middleware('auth')->group(function () {
         }
     })->name('api.products.nextCode');
 
-    Route::get('pupilometro-digital', function () {
-        $path = public_path('pupilometro-digital/index.php');
-        abort_unless(is_file($path), 404);
-
-        ob_start();
-        include $path;
-        $html = ob_get_clean();
-
-        return response($html, 200, [
-            'Content-Type' => 'text/html; charset=UTF-8',
-        ]);
-    })->name('pupilometro.digital');
+    Route::redirect('pupilometro-digital', '/pupilometro-next/index.html')->name('pupilometro.digital');
 
     // Rotas de Ordens de Serviço
     Route::get('os/buscar-produto', [\App\Http\Controllers\ProductsLookupController::class, 'index'])->name('os.products.lookup');

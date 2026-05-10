@@ -1,4 +1,38 @@
 <x-app-layout title="Editar O.S. {{ $o->os_number }}">
+    @push('styles')
+    <style>
+        .os-pupilometro-section {
+            margin-top: 40px;
+            padding: 24px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+
+        .os-pupilometro-section h2 {
+            margin-bottom: 8px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+            font-family: inherit;
+        }
+
+        .os-pupilometro-section p {
+            margin-bottom: 20px;
+            color: #555;
+            font-family: inherit;
+        }
+
+        .os-pupilometro-frame {
+            width: 100%;
+            min-height: 1100px;
+            border: none;
+            border-radius: 12px;
+            background: #e8eef5;
+            display: block;
+        }
+    </style>
+    @endpush
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4 md:p-6">
             <div class="flex items-center justify-between mb-4">
@@ -273,10 +307,25 @@
     </div>
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        @include('partials.os-pupilometro')
+        <section class="os-pupilometro-section">
+            <h2>Pupilômetro Digital</h2>
+            <p>Ferramenta auxiliar para medição pupilar dentro da Ordem de Serviço. Os dados permanecem no seu navegador.</p>
+
+            <div id="pupilometro-edit-embutido" class="overflow-hidden rounded-2xl border-2 border-cyan-600/60 bg-slate-950 shadow-2xl">
+                <iframe
+                    src="{{ asset('pupilometro-next/index.html') }}"
+                    title="Pupilômetro Digital"
+                    class="block w-full border-0 bg-slate-950"
+                    style="height: min(860px, 78vh); min-height: 680px;"
+                    loading="lazy"
+                    allow="camera; fullscreen"
+                    referrerpolicy="same-origin">
+                </iframe>
+            </div>
+        </section>
     </div>
 
-    <script>    <script>
+    <script>
         // Função para confirmar marcação como ENTREGUE com verificação de saldo
         async function confirmMarcarEntregue(osId) {
             try {
