@@ -1769,6 +1769,43 @@
 
         window.syncPupilometroNextToReceita = function () {
             try {
+                const latestRaw = localStorage.getItem('pupilometro-history');
+                if (latestRaw) {
+                    const parsed = JSON.parse(latestRaw);
+                    const latest = Array.isArray(parsed) ? parsed[0] : null;
+                    if (latest && latest.dnp) {
+                        const map = {
+                            custom_longe_esferico_od: '0.00',
+                            custom_longe_cilindrico_od: '0.00',
+                            custom_longe_eixo_od: '180',
+                            custom_longe_altura_od: '',
+                            custom_longe_dnp_od: latest.dnp.longeOd || '',
+                            custom_longe_esferico_oe: '0.00',
+                            custom_longe_cilindrico_oe: '0.00',
+                            custom_longe_eixo_oe: '180',
+                            custom_longe_altura_oe: '',
+                            custom_longe_dnp_oe: latest.dnp.longeOe || '',
+                            custom_perto_esferico_od: '0.00',
+                            custom_perto_cilindrico_od: '0.00',
+                            custom_perto_eixo_od: '180',
+                            custom_perto_altura_od: '',
+                            custom_perto_dnp_od: latest.dnp.pertoOd || '',
+                            custom_perto_esferico_oe: '0.00',
+                            custom_perto_cilindrico_oe: '0.00',
+                            custom_perto_eixo_oe: '180',
+                            custom_perto_altura_oe: '',
+                            custom_perto_dnp_oe: latest.dnp.pertoOe || '',
+                            custom_adicao: '',
+                            custom_doctor_name: ''
+                        };
+                        Object.keys(map).forEach(function (key) {
+                            var el = document.querySelector('[name="prescription[' + key + ']"]');
+                            if (el) el.value = map[key];
+                        });
+                        return true;
+                    }
+                }
+
                 const raw = localStorage.getItem('pupilometro-pd-mm');
                 if (!raw) return false;
 
@@ -1794,6 +1831,15 @@
                 function set(id, val) {
                     var el = document.getElementById(id);
                     if (el && typeof val === 'string') el.value = val;
+                }
+                if (p.prescription) {
+                    Object.keys(p.prescription).forEach(function (key) {
+                        var el = document.querySelector('[name="prescription[' + key + ']"]');
+                        if (el && typeof p.prescription[key] === 'string') {
+                            el.value = p.prescription[key];
+                        }
+                    });
+                    return;
                 }
                 set('prescription_longe_dnp_od', p.longe_dnp_od || '');
                 set('prescription_longe_dnp_oe', p.longe_dnp_oe || '');
