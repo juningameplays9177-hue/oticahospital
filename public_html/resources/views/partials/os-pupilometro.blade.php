@@ -1,9 +1,9 @@
 @php
-    /** Prioriza public/pupilometro; depois index.html; fallback O.S/pupilometro */
+    /** App Next estático em public/pupilometro (index.html); fallbacks legados */
     $pupiloSrc = null;
     foreach ([
-        'pupilometro/index.php',
         'pupilometro/index.html',
+        'pupilometro/index.php',
         'O.S/pupilometro/index.php',
     ] as $rel) {
         if (file_exists(public_path($rel))) {
@@ -11,9 +11,9 @@
             break;
         }
     }
-    $pupiloSrc = $pupiloSrc ?? asset('pupilometro/index.php');
+    $pupiloSrc = $pupiloSrc ?? asset('pupilometro/index.html');
 @endphp
-<link rel="stylesheet" href="{{ asset('css/os-pupilometro.css') }}?v=2" />
+<link rel="stylesheet" href="{{ asset('css/os-pupilometro.css') }}?v=3" />
 <section class="os-pupilometro-section" aria-labelledby="os-pupilometro-heading">
     <div class="os-pupilometro-section__head">
         <h2 id="os-pupilometro-heading">Pupilômetro Digital</h2>

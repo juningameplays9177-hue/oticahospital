@@ -58,7 +58,8 @@ export default function HomeClient() {
 
   const openReceitaEmNovaAba = () => {
     if (typeof window === "undefined") return;
-    window.open(new URL("/receita", window.location.origin).toString(), "_blank", "noopener,noreferrer");
+    const bp = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+    window.open(`${window.location.origin}${bp}/receita/`, "_blank", "noopener,noreferrer");
   };
 
   useEffect(() => {

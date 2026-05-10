@@ -17,11 +17,13 @@ const fontMono = JetBrains_Mono({
   weight: ["400", "500", "600"]
 });
 
+const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export const metadata: Metadata = {
   title: "Pupilometro Digital",
   description: "Medicao de distancia pupilar com camera e deteccao facial local.",
   icons: {
-    icon: "/favicon.svg"
+    icon: `${base}/favicon.svg`
   }
 };
 
@@ -36,9 +38,6 @@ export const viewport: Viewport = {
  * CSS global (Tailwind) passa a ser importado so em app/page.tsx — se o bundle CSS falhar,
  * este layout ainda aplica o fundo e botoes (critical CSS + classes).
  */
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -48,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         <style id="pupilo-critical" dangerouslySetInnerHTML={{ __html: CRITICAL_PUPILO_CSS }} />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
       </head>
       <body
         className="pupilo-body min-h-screen font-sans antialiased [font-feature-settings:'ss01']"

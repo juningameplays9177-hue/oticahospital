@@ -7,9 +7,6 @@ export const metadata: Metadata = {
   description: "Ficha de dados da receita óptica — preenchimento local."
 };
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 export default function ReceitaPage() {
   return (
     <Suspense

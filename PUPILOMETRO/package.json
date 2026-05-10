@@ -7,6 +7,7 @@
     "clean": "node -e \"const fs=require('fs'); try{fs.rmSync('.next',{recursive:true,force:true})}catch(e){process.exit(0)}\"",
     "dev:clean": "npm run clean && next dev",
     "build": "next build",
+    "export:laravel": "next build && node ./scripts/export-to-laravel.mjs",
     "start": "next start",
     "lint": "next lint",
     "prepare": "node ./scripts/git-hooks-setup.mjs",
